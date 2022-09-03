@@ -1,0 +1,1 @@
+void print_echo(char** commands,int cmd_num);
