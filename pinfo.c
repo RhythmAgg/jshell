@@ -9,6 +9,7 @@ void pinfo(char** commands,int cmd_num,pid_t shell_pid){
     if(cmd_num == 1) process_id = shell_pid;
     else{
         process_id = atoi(commands[1]);
+        
     }
     char stat_process[100], status_process[100], exe_process[100];
     sprintf(stat_process, "/proc/%d/stat", process_id);

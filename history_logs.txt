@@ -1,21 +1,21 @@
-discover "echo.c"
-discover "echo.h"
-discover -d -f "ls.c"
-discover -d "1"
-discover
-discover -d "makefile"
-discover -d "echo.c"
-discover -f "headers.h"
-discover -d "test.txt"
-discover "test.txt"
-discover "rhythm.tzt"
-history
-echo rhythm 
-echo ok:history
-echo ok;history
-fdf
-history
-cd
-history
-discover -d "echo.c"
-19
+echo vinkesh is sexy
+discover .
+cd dir_1
+discover ..
+discover .
+discover ..
+discover .
+cd dir_1
+pwd
+discover ..
+sleep 2&
+sleep 4 & sleep 2
+sleep 4&
+ls
+ls -l
+ls -a
+sleep 2
+cat pwd_.c
+cat pwd.c
+echo vinkesh
+10
