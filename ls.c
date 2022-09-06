@@ -22,6 +22,11 @@ int file_type(mode_t mode) {
     return (c);
 }
 
+char* filename(char* path){
+    char cwd[400];
+    return &path[strlen(strcat(getcwd(cwd,400),"/"))];
+}
+
 void ls_path(char* file,int a_flag){
     struct stat check_dir;
     if(stat(file,&check_dir)!=0){
@@ -30,7 +35,7 @@ void ls_path(char* file,int a_flag){
     }
     if(S_ISREG(check_dir.st_mode)!=0){
         if(check_dir.st_mode & S_IXUSR) printf("\033[0;32m");
-        printf("%s\n",file);
+        printf("%s\n",filename(file));
         printf("\033[0m");
         return;
     }
@@ -57,11 +62,21 @@ void ls_l(char* file,int a_flag){
         return;
     }
     if(S_ISREG(check_dir.st_mode)!=0){
-        ls_l_print(file,0);
+        ls_l_print(filename(file),0);
         return;
     }
     struct dirent** d;
     int n = scandir(file,&d,0,alphasort);
+    int total_blocks=0;
+    for(int i=0;i<n;i++){
+        if(a_flag == 0){
+            if(d[i]->d_name[0] == '.') continue;
+        }
+        struct stat block;
+        stat(d[i]->d_name,&block);
+        total_blocks+=block.st_blocks;
+    }
+    printf("total %d\n",total_blocks);
     for(int i=0;i<n;i++){
         if(a_flag == 0){
             if(d[i]->d_name[0] == '.') continue;
@@ -125,49 +140,118 @@ void ls(char** commands,int cmd_num){
     if(l_count==0){
         if(index==0) ls_path(curr_dir,a_count);
         for(int i=0;i<index;i++){
-            if(strcmp(fil_dir[i],".") == 0){
-                ls_path(curr_dir,a_count);
-            }
-            else if(strcmp(fil_dir[i],"..") == 0){
-                chdir("..");
-                char* parent;
-                ls_path(getcwd(parent,300),a_count);
+            if(fil_dir[i][0] =='.'){
+                char temp[400];
+                strcpy(temp,curr_dir);
+                // printf("%s\n",temp);
+                strcat(temp,&fil_dir[i][1]);
+                // printf("%s\n",temp);
+                chdir(temp);
+                ls_path(temp,a_count);
                 chdir(curr_dir);
             }
-            else if(strcmp(fil_dir[i],"~")==0){
-                ls_path(home_dir,a_count);
+            else if(fil_dir[i][0] == '.' && fil_dir[i][1] == '.'){
+                chdir("..");
+                char parent[400];
+                getcwd(parent,400);
+                strcat(parent,&fil_dir[i][2]);
+                chdir(parent);
+                ls_path(parent,a_count);
+                chdir(curr_dir);
+            }
+            else if(fil_dir[i][0]=='~'){
+                char temp[400];
+                strcpy(temp,home_dir);
+                // printf("%s\n",temp);
+                strcat(temp,&fil_dir[i][1]);
+                // printf("%s\n",temp);
+                chdir(temp);
+                ls_path(temp,a_count);
+                chdir(curr_dir);
             }
             else{
-                ls_path(fil_dir[i],a_count);
+                if(fil_dir[i][0] == '/'){
+                    if(chdir(fil_dir[i])==0){
+                        ls_path(fil_dir[i],a_count);
+                        chdir(curr_dir);
+                    }
+                    else{
+                        char path[400];
+                        strcpy(path,curr_dir);
+                        chdir(strcat(path,fil_dir[i]));
+                        ls_path(path,a_count);
+                        chdir(curr_dir);
+                    }
+                }
+                else{
+                    char path[400];
+                    strcpy(path,curr_dir);
+                    strcat(path,"/");
+                    strcat(path,fil_dir[i]);
+                    chdir(path);
+                    ls_path(path,a_count);
+                    chdir(curr_dir);
+                }
             }
             if(i != index-1) printf("\n");
-
         }
     }else{
         if(index==0) ls_l(curr_dir,a_count);
         for(int i=0;i<index;i++){
-            if(strcmp(fil_dir[i],".") == 0){
-                ls_l(curr_dir,a_count);
-            }
-            else if(strcmp(fil_dir[i],"..") == 0){
-                chdir("..");
-                char* parent;
-                ls_l(getcwd(parent,300),a_count);
+            if(fil_dir[i][0] =='.'){
+                char temp[400];
+                strcpy(temp,curr_dir);
+                // printf("%s\n",temp);
+                strcat(temp,&fil_dir[i][1]);
+                // printf("%s\n",temp);
+                chdir(temp);
+                ls_l(temp,a_count);
                 chdir(curr_dir);
             }
-            else if(strcmp(fil_dir[i],"~")==0){
-                ls_l(home_dir,a_count);
+            else if(fil_dir[i][0] == '.' && fil_dir[i][1] == '.'){
+                chdir("..");
+                char parent[400];
+                getcwd(parent,400);
+                strcat(parent,&fil_dir[i][2]);
+                chdir(parent);
+                ls_l(parent,a_count);
+                chdir(curr_dir);
+            }
+            else if(fil_dir[i][0]=='~'){
+                char temp[400];
+                strcpy(temp,home_dir);
+                // printf("%s\n",temp);
+                strcat(temp,&fil_dir[i][1]);
+                // printf("%s\n",temp);
+                chdir(temp);
+                ls_l(temp,a_count);
+                chdir(curr_dir);
             }
             else{
-                ls_l(fil_dir[i],a_count);
+                if(fil_dir[i][0] == '/'){
+                    if(chdir(fil_dir[i])==0){
+                        ls_l(fil_dir[i],a_count);
+                        chdir(curr_dir);
+                    }
+                    else{
+                        char path[400];
+                        strcpy(path,curr_dir);
+                        chdir(strcat(path,fil_dir[i]));
+                        ls_l(path,a_count);
+                        chdir(curr_dir);
+                    }
+                }
+                else{
+                    char path[400];
+                    strcpy(path,curr_dir);
+                    strcat(path,"/");
+                    strcat(path,fil_dir[i]);
+                    chdir(path);
+                    ls_l(path,a_count);
+                    chdir(curr_dir);
+                }
             }
             if(i != index-1) printf("\n");
-
         }
-
-
     }
-    
-   
-
 }
