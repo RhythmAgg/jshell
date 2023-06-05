@@ -32,8 +32,8 @@ void pinfo(char** commands,int cmd_num,pid_t shell_pid){
             read_stat[index] = token;
             token = strtok(NULL," ");
         }
-        char* status = read_stat[2];
-        char* memory = read_stat[22];
+        status = read_stat[2];
+        memory = read_stat[22];
         int process_grp = atoi(read_stat[4]);
         int terminal_grp = atoi(read_stat[7]);
         if (process_grp == terminal_grp)

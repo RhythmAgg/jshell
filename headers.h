@@ -20,3 +20,6 @@
 #include "pinfo.h"
 #include "discover.h"
 #include "process.h"
+#include "user_defined.h"
+#include <termios.h>
+#include "tab.h"

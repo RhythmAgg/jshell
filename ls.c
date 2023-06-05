@@ -138,8 +138,12 @@ void ls(char** commands,int cmd_num){
         }
     }
     if(l_count==0){
-        if(index==0) ls_path(curr_dir,a_count);
+        if(index==0){
+            printf(".:\n");
+            ls_path(curr_dir,a_count);
+        }
         for(int i=0;i<index;i++){
+            printf("%s:\n",fil_dir[i]);
             if(fil_dir[i][0] =='.'){
                 char temp[400];
                 strcpy(temp,curr_dir);
@@ -196,8 +200,12 @@ void ls(char** commands,int cmd_num){
             if(i != index-1) printf("\n");
         }
     }else{
-        if(index==0) ls_l(curr_dir,a_count);
+        if(index==0){
+            printf(".:\n");
+            ls_l(curr_dir,a_count);
+        }
         for(int i=0;i<index;i++){
+            printf("%s:\n",fil_dir[i]);
             if(fil_dir[i][0] =='.'){
                 char temp[400];
                 strcpy(temp,curr_dir);
